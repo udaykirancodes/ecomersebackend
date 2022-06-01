@@ -4,7 +4,6 @@ const router = express.Router();
 // importing routers 
 const Auth = require('./auth');  
 const Products = require('./Product/index'); 
-const Auth = require('./auth'); 
 
 const Sell = require('./Sell')
 

@@ -16,7 +16,6 @@ router.post('/getprice',[
             email, name, contact, vehicletype
         })
         const saveSell = await sell.save();
-        res.json(saveSell);
         res.status(200).json({success:true, data: saveSell})
     } catch(error){
         console.log(error.message);
