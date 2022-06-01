@@ -17,8 +17,10 @@ router.post('/getprice',[
         })
         const saveSell = await sell.save();
         res.json(saveSell);
+        res.status(200).json({success:true, data: saveSell})
     } catch(error){
-         res.status(500).send("Some Error Occured Try to Sell it Again")
+        console.log(error.message);
+        res.status(500).json({success:false,msg:'Internal Server Error'});
     }
 })
 
