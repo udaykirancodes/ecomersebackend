@@ -7,7 +7,7 @@ mongoose
 .then(()=>{
     console.log('Db Connected');
     app.listen(config.port,()=>{
-        console.log('Server Started'); 
+        console.log('Server Started'); //server started
     }) 
 })
 .catch((err)=>{
