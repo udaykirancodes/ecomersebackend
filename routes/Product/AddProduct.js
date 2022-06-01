@@ -39,7 +39,7 @@ async(req,res)=>{
             details:{
                 brand:req.body.brand,
                 modelname:req.body.modelname,
-                fueltype:req.body.fueltype
+                type:req.body.type
             },
             price:req.body.price,
             img:req.files.map(element => {
