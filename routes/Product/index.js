@@ -2,8 +2,8 @@ const router = require('express').Router();
 
 
 //importing product routes
-const AddProduct = require('./AddProduct');
-
-router.use('/',AddProduct);
-
+const Product = require('./Product'); 
+const Find = require('./Find'); 
+router.use('/',Product);
+router.use('/find',Find);
 module.exports = router ; 
