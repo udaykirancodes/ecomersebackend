@@ -9,10 +9,6 @@ router.post('/getprice',[
     body('name').isLength({min: 3}),
     body('contact').isLength({min:10})
 ], async(req, res)=>{
-    const errors = validationResult(req);
-    if(!errors.isEmpty()){
-        return res.status(400).json({errors: errors.array() });
-    }
 
     try{
         const {email, name, contact, vehicletype} = req.body;
