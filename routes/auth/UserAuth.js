@@ -11,6 +11,7 @@ const JWT_SECRET = config.jwt.jwtsecret
 
 // importing model
 const User = require('../../models/User'); 
+// const TempUser = require('../../models/TempUser'); // email verification purpose 
 
 // 1.Register a user
 // validation , try catch , hashing , jsonwebtoken 
@@ -62,6 +63,27 @@ async (req, res) => {
 })
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // 2.Login a user 
 router.post('/login', 
 [
@@ -102,6 +124,17 @@ async (req, res) => {
 })
 
 
+
+
+
+
+
+
+
+
+
+
+// user info edit option :: protected for user (own account can be edited not other's)
 router.put('/edit', FetchUser ,
 async (req,res)=>{
     
