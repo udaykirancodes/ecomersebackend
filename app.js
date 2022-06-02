@@ -13,7 +13,7 @@ app.use('/',routes)
 
 
 // to serve the static files 
-app.use('/uploads',express.static('uploads'));
+app.use('/uploads',express.static('uploads/'));
 
 
 module.exports = app;  

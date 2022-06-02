@@ -8,7 +8,6 @@ const Product = require('../../models/Product');
 
 //importing middleware for admin checking 
 const FetchAdmin = require('../../middlewares/FetchAdmin');  
-const { model, modelNames } = require('mongoose');
 
 
 
@@ -44,10 +43,10 @@ async(req,res)=>{
             },
             price:req.body.price,
             img:req.files.map(element => {
-                return element.filename
+                return element.path 
             })
         })
-
+        console.log(req.files[0].path); 
         let newProduct = await product.save(); 
 
         res.status(200).json({success:true,data:newProduct}); 
@@ -108,7 +107,7 @@ async(req,res)=>{
         }
         if(req.files[0]){
             product.img = req.files.map(element => {
-                return element.filename
+                return element.path 
             })
         }
         if(brand){
