@@ -32,6 +32,10 @@ router.post('/add',
 FetchAdmin ,
 upload.array('images', 5),
 async(req,res)=>{
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(401).json({ success:false , msg: "All Fields are Required" })
+    }
     try {
         let product = new Product({
             name:req.body.name , 
@@ -88,6 +92,10 @@ router.put('/edit',
 FetchAdmin ,
 upload.array('images', 5),
 async(req,res)=>{
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(401).json({ success:false , msg: "All Fields are Required" })
+    }
     try {
 
         let product = await Product.findByIdAndUpdate(req.body.id); 
