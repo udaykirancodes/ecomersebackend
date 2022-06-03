@@ -5,8 +5,8 @@ const router = express.Router();
 const Auth = require('./auth/index');  
 const Products = require('./Product/index'); 
 const Blogs = require('./Blogs/index'); 
-const Marketing = require('./Marketing/index'); 
-
+const Subscribers = require('./Subscribers/index'); 
+const Emails = require('./Emails/index'); 
 
 //authentication routes 
 router.use('/auth',Auth); 
@@ -17,8 +17,11 @@ router.use('/product',Products);
 // blog product routers 
 router.use('/blogs',Blogs)
 
-// marketing routes 
-router.use('/marketing',Marketing); 
+// subscriber routes 
+router.use('/subscribers',Subscribers); 
+
+// Email - Marketing Routes 
+router.use('/emails',Emails);  
 
 // base root 
 router.get('/',(req,res)=>{

@@ -1,7 +1,5 @@
 const router = require('express').Router(); 
-const mongoose = require('mongoose')
-; // importing models 
-const Subscriber = require('../../models/Subscriber'); 
+const mongoose = require('mongoose'); // importing models 
 const User = require('../../models/User');
 
 
@@ -16,22 +14,20 @@ router.post('/subscribe/:id' , async (req,res)=>{
         id = new mongoose.Types.ObjectId(id);
     
         // finding if user exists 
-        let user = await User.findById(id); 
+        let user = await User.findByIdAndUpdate(id); 
         if(!user){
             return res.status(400).json({success:false,msg:"User Doesn't Exists"}); 
         }
         
         // checking if aleready subscribed 
-        let subscriber = await Subscriber.find({email:user.email}); 
-        if(subscriber.length > 0){
+        if(user.subscribed===true){
+            await user.save(); 
             return res.status(400).json({success:false,msg:"User Already Subscribed"}); 
         }
-        // creating marketer 
-        subscriber = new Subscriber({
-            email:user.email 
-        })
 
-        let newsubscriber = await subscriber.save(); 
+        user.subscribed = true;         
+
+        let newuser = await user.save(); 
         res.status(200).json({success:true , msg:"User Subscribed"}); 
     } catch (error) {
         console.log(error.message);
@@ -50,18 +46,18 @@ router.delete('/unsubscribe/:id' , async (req,res)=>{
         //convert string into mongo object id 
         id = new mongoose.Types.ObjectId(id);
         // findng if user exists 
-        let user = await User.findById(id); 
+        let user = await User.findByIdAndUpdate(id); 
         if(!user){
             return res.status(400).json({success:false,msg:"User Not Exists"}); 
         }
 
         // checking if subscribed or not 
-        let subscriber = await Subscriber.findOneAndDelete({email:user.email}); 
-
-        if(!subscriber){
+        if(!user.subscribed){
+            await user.save(); 
             return res.status(400).json({success:false,msg:"User haven't Subscribed"}); 
         }
-
+        user.subscribed = false; 
+        let newuser = await user.save(); 
         res.status(200).json({success:true , msg:"User UnSubscribed"}); 
     } catch (error) {
         console.log(error.message);

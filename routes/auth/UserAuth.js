@@ -37,13 +37,18 @@ async (req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password , salt) 
 
     try {
+        let min = 100000; 
+        let max = 999999; 
+        let randomNumber = Math.floor(Math.random() * (max - min) ) + min; 
         // trying to save the user 
         user = new User({
             email:req.body.email,
             password:hashedPassword,
             phone:req.body.phone,
             name:req.body.name,
-            img:''
+            emailVerified:false,
+            subscribed:false,
+            otp: randomNumber 
         })
         let newUser = await user.save(); 
 

@@ -19,11 +19,18 @@ const UserSchema = new mongoose.Schema({
         type:String,
         required:false  
     },
-    img :{
-        type:String,
-        required:false,
-        default:'' 
+    emailVerified:{
+        type:Boolean,
+        default:false 
     },
+    otp:{
+        type:Number,
+        default:false 
+    }, 
+    subscribed:{
+        type:Boolean,
+        default:true 
+    }, 
     date:{
         type:Date,
         default:Date.now 
