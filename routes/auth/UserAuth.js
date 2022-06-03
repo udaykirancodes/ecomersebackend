@@ -2,6 +2,8 @@ const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken'); 
+const nodemailer = require('nodemailer'); 
+
 
 const FetchUser = require('../../middlewares/FetchUser');
 
@@ -51,16 +53,45 @@ async (req, res) => {
             otp: randomNumber 
         })
         let newUser = await user.save(); 
-
         // creating authtoken and sending the token 
         const data = {
             user:{
                 id:newUser.id
             }
         }
-        const authToken = jwt.sign(data,JWT_SECRET); 
 
-        res.status(200).json({success:true,authToken:authToken});
+        // sending otp via email 
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: config.email.id,
+                pass: config.email.app_password  
+            }
+        });
+        let info = await transporter.sendMail({
+            from: config.email.id,
+            to: user.email,
+            subject:"Welcome to Metal-Station!!",
+            text:`
+            We are Happy to see you at Metal-Station.
+            Your OTP is : ${user.otp}
+            Kindly do not share with anybody!
+            `
+          }, function (error, info) {
+              if (error) {
+                  console.log(error.message)
+                  res.status(400).json({success:false,msg:"We coudn't send you email!",error:error.message})
+                } else {
+                //   console.log('Mail Sent')
+                // res.status(200).json({success:true,msg:"Email Sent Successfully"}); 
+                // sending authtoken if user email is valid 
+                const authToken = jwt.sign(data,JWT_SECRET); 
+                res.status(200).json({success:true,authToken:authToken});
+              }
+          });
+
+
     } catch (error) {
         console.log(error.message);
         res.status(500).json({success:false,msg:'Internal Server Error'});
@@ -68,24 +99,47 @@ async (req, res) => {
 })
 
 
+// email verification
+router.post('/verify',
+[
+    body('email','Invalid Email').isEmail(),
+],
+async(req,res)=>{
 
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(401).json({ success:false , msg: "Invalid Email" })
+        }
+    
+        //checking if user exists 
+        let VerificationUser = await User.findOneAndUpdate({email:req.body.email}); 
+        if(!VerificationUser){
+            return res.status(400).json({success:false , msg:"User Doesn't Exists With This Email"})
+        }
 
+        // validating 
+        if(!VerificationUser.otp===!req.body.otp){
+            VerificationUser.emailVerified = true; 
+            VerificationUser.subscribed=true 
+        }
+        // creating authtoken and sending the token 
+        const data = {
+            user:{
+                id:VerificationUser.id
+            }
+        }
 
+        let newuser = await VerificationUser.save(); 
+        const authToken = jwt.sign(data,JWT_SECRET); 
+        res.status(200).json({success:true,authToken:authToken});
 
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({success:false,msg:'Internal Server Error'});
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+})
 
 
 
@@ -127,14 +181,6 @@ async (req, res) => {
         res.status(500).json({success:false,msg:'Internal Server Error'});
     }
 })
-
-
-
-
-
-
-
-
 
 
 

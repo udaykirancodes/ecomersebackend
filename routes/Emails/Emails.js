@@ -13,7 +13,7 @@ const Users = require('../../models/User')
 
 // required things for mailing 
 
-router.post('/send/:people',
+router.post('/send',
 FetchAdmin, 
 [
     body('subject').isLength({min:1}),
@@ -25,7 +25,7 @@ async (req,res)=>{
         return res.status(401).json({ success:false , msg: "All Fields are Required" })
     }
     try {
-        let id = req.params.people ; 
+        let id = req.body.to; 
         if(!id){
             return res.status(400).json({success:false,msg:'Invalid Id'});
         }
@@ -58,7 +58,7 @@ async (req,res)=>{
             }
         });
         let info = await transporter.sendMail({
-            from: 'metalstation22@gmail.com',
+            from: config.email.id,
             to: receivers,
             subject:req.body.subject,
             text:req.body.text 
