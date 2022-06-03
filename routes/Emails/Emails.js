@@ -60,11 +60,8 @@ async (req,res)=>{
         let info = await transporter.sendMail({
             from: 'metalstation22@gmail.com',
             to: receivers,
-            subject:"Email Testing Using NodeMailer",
-            text:`
-            This is the test mail using nodemailer 
-            `,
-            html:""
+            subject:req.body.subject,
+            text:req.body.text 
           }, function (error, info) {
               if (error) {
                   console.log(error.message)
