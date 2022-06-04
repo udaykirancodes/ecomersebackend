@@ -123,6 +123,14 @@ async(req,res)=>{
             VerificationUser.emailVerified = true; 
             VerificationUser.subscribed=true 
         }
+        // updating the password 
+        
+        // hashing the password 
+        if(req.body.password){
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(req.body.password , salt) 
+            VerificationUser.password = hashedPassword 
+        }
         // creating authtoken and sending the token 
         const data = {
             user:{
@@ -209,5 +217,61 @@ async (req,res)=>{
     }
 })
 
+
+// password reset || forgot password 
+
+router.post('/reset',
+[
+    body('email','Invalid Email').isEmail()
+],
+async (req,res)=>{
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(401).json({ success:false , msg: "Invalid Email"})
+    }
+
+    // finding user 
+    let user = await User.findOneAndUpdate({email:req.body.email}); 
+    if(!user){
+        return res.status(400).json({success:false,msg:"User Not Found"})
+    }
+
+
+    // generating otp 
+    let min = 100000; 
+    let max = 999999; 
+    let otp = Math.floor(Math.random() * (max - min) ) + min; 
+    
+    // updating the otp 
+    user.otp = otp ; 
+    
+    let newuser = await user.save(); 
+    // send email with otp 
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: config.email.id,
+            pass: config.email.app_password  
+        }
+    });
+    let info = await transporter.sendMail({
+        from: config.email.id,
+        to: req.body.email,
+        subject:"OTP for Password Reset!!",
+        text:`
+        We are Happy to see you at Metal-Station.
+        Your OTP is : ${otp}
+        Kindly do not share with anybody!
+        `
+      }, function (error, info) {
+          if (error) {
+              console.log(error.message)
+              res.status(400).json({success:false,msg:"Error in sending email",error:error.message})
+            } else {
+            //   console.log('Mail Sent')
+              res.status(200).json({success:true,msg:"Email Sent Successfully"}); 
+          }
+      });
+})
 
 module.exports = router; 

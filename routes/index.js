@@ -23,6 +23,7 @@ router.use('/subscribers',Subscribers);
 // Email - Marketing Routes 
 router.use('/emails',Emails);  
 
+
 // base root 
 router.get('/',(req,res)=>{
     res.send('Hello👋')
