@@ -61,7 +61,6 @@ async (req, res) => {
         }
 
         // sending otp via email 
-
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -69,15 +68,15 @@ async (req, res) => {
                 pass: config.email.app_password  
             }
         });
+        console.log(user.email)
         let info = await transporter.sendMail({
             from: config.email.id,
             to: user.email,
             subject:"Welcome to Metal-Station!!",
-            text:`
-            We are Happy to see you at Metal-Station.
-            Your OTP is : ${user.otp}
-            Kindly do not share with anybody!
-            `
+            text:
+`We are Happy to see you at Metal-Station.
+Your OTP is : ${user.otp}
+Kindly do not share with anybody!`
           }, function (error, info) {
               if (error) {
                   console.log(error.message)
@@ -87,6 +86,7 @@ async (req, res) => {
                 // res.status(200).json({success:true,msg:"Email Sent Successfully"}); 
                 // sending authtoken if user email is valid 
                 const authToken = jwt.sign(data,JWT_SECRET); 
+                console.log('Email Sent'); 
                 res.status(200).json({success:true,authToken:authToken});
               }
           });
@@ -118,29 +118,33 @@ async(req,res)=>{
             return res.status(400).json({success:false , msg:"User Doesn't Exists With This Email"})
         }
 
-        // validating 
-        if(!VerificationUser.otp===!req.body.otp){
+        // validating (if otp is matched)
+        if(VerificationUser.otp===req.body.otp){
             VerificationUser.emailVerified = true; 
             VerificationUser.subscribed=true 
-        }
-        // updating the password 
-        
-        // hashing the password 
-        if(req.body.password){
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(req.body.password , salt) 
-            VerificationUser.password = hashedPassword 
-        }
-        // creating authtoken and sending the token 
-        const data = {
-            user:{
-                id:VerificationUser.id
+            // updating the password 
+            // hashing the password 
+            if(req.body.password){
+                const salt = await bcrypt.genSalt(10);
+                const hashedPassword = await bcrypt.hash(req.body.password , salt) 
+                VerificationUser.password = hashedPassword,
+                VerificationUser.otp=0
             }
+            // creating authtoken and sending the token 
+            const data = {
+                user:{
+                    id:VerificationUser.id
+                }
+            }
+            
+            let newuser = await VerificationUser.save(); 
+            const authToken = jwt.sign(data,JWT_SECRET); 
+            res.status(200).json({success:true,authToken:authToken});
         }
-
-        let newuser = await VerificationUser.save(); 
-        const authToken = jwt.sign(data,JWT_SECRET); 
-        res.status(200).json({success:true,authToken:authToken});
+        else{
+            // if otp is not matched 
+            return res.status(401).json({ success:false , msg: "OTP Doesn't Matched" })
+        }
 
     } catch (error) {
         console.log(error.message);

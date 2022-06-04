@@ -9,11 +9,10 @@ const transporter = nodemailer.createTransport({
 });
 
 send();
-
 async function send() {
     const result = await transporter.sendMail({
         from: 'metalstation22@gmail.com',
-        to: ['officialudaykiran@gmail.com','b182546@rgukt.ac.in','udaycodess@gmail.com'],
+        to: 'udaycodess@gmail.com',
         subject: 'Sending Multiple Mails',
         text: 'Testing...'
     });
