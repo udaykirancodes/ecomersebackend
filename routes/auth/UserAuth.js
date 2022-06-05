@@ -127,9 +127,9 @@ async(req,res)=>{
             if(req.body.password){
                 const salt = await bcrypt.genSalt(10);
                 const hashedPassword = await bcrypt.hash(req.body.password , salt) 
-                VerificationUser.password = hashedPassword,
-                VerificationUser.otp=0
+                VerificationUser.password = hashedPassword
             }
+            VerificationUser.otp=null 
             // creating authtoken and sending the token 
             const data = {
                 user:{
@@ -263,9 +263,9 @@ async (req,res)=>{
         to: req.body.email,
         subject:"OTP for Password Reset!!",
         text:`
-        We are Happy to see you at Metal-Station.
-        Your OTP is : ${otp}
-        Kindly do not share with anybody!
+We are Happy to see you at Metal-Station.
+Your OTP is : ${otp}
+Kindly do not share with anybody!
         `
       }, function (error, info) {
           if (error) {

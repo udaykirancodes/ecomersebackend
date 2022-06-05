@@ -31,6 +31,16 @@ const UserSchema = new mongoose.Schema({
         type:Boolean,
         default:true 
     }, 
+    wishlist:{
+        type:Array,
+        required:false, 
+        default:[]
+    }, 
+    interests:{
+        type:Array , 
+        required:false, 
+        default:[]
+    }, 
     date:{
         type:Date,
         default:Date.now 

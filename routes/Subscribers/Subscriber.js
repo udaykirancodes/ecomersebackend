@@ -7,7 +7,7 @@ const User = require('../../models/User');
 router.post('/subscribe/:id' , async (req,res)=>{
     try {
         let id = req.params.id
-        if(id.length < 12){
+        if(mongoose.isValidObjectId(id)){
             return res.status(400).json({success:false , msg:"Invalid Id"});
         }
         //convert string into mongo object id 
@@ -40,7 +40,7 @@ router.post('/subscribe/:id' , async (req,res)=>{
 router.delete('/unsubscribe/:id' , async (req,res)=>{
     try {
         let id = req.params.id
-        if(id.length < 12){
+        if( mongoose.isValidObjectId(id)){
             return res.status(400).json({success:false , msg:"Invalid Id"});
         }
         //convert string into mongo object id 
