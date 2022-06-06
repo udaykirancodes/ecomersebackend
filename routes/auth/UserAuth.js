@@ -278,4 +278,80 @@ Kindly do not share with anybody!
       });
 })
 
+
+
+
+// google authentication 
+
+// Google Login 
+const { OAuth2Client } = require('google-auth-library')
+
+const CLIENT_ID = config.oauth.client_id 
+
+const client = new OAuth2Client(CLIENT_ID)
+
+router.post('/googlelogin', async (req, res) => {
+    try {
+            const tokenId  = req.body.tokenId;
+            const result = await client.verifyIdToken({ idToken: tokenId, audience: CLIENT_ID })
+         
+                const email_verified = result.payload.email_verified;
+                const name = result.payload.name ; 
+                const email = result.payload.email ; 
+
+                let user ; 
+                success = false ; 
+                if (email_verified) {
+                    user = await User.findOne({ email: email });
+                    if (user) {
+                        // already in database 
+                        const data = {
+                            user: {
+                                id: user.id
+                            }
+                        }
+                        const authToken = jwt.sign(data, JWT_SECRET)
+                        success = true
+                        res.status(200).json({ success, authToken });
+                    }
+                    else {
+                        // we need to create a user with the same details 
+                        let generatedPassword = email + '12345'; 
+                        const salt = await bcrypt.genSalt(10)
+                        const hashedPassword = await bcrypt.hash(generatedPassword, salt)
+                        try {
+                            user = new User({
+                                email:req.body.email,
+                                password:hashedPassword,
+                                phone:req.body.phone,
+                                name:req.body.name,
+                                emailVerified:true,
+                                subscribed:true,
+                                otp: null  
+                            })
+                            const newUser = await user.save();
+                            const data = {
+                                user: {
+                                    id: user.id
+                                }
+                            }
+                            const authToken = jwt.sign(data, JWT_SECRET)
+                            success = true
+                            res.status(200).json({ success, authToken });
+                        } catch (error) {
+                            res.status(401).json({ success, msg: "Internal Server Error" })
+                        }
+                    }
+
+                }
+                else{
+                    res.status(404).json({success:false , msg:"Email Not Verified"})
+                }
+            } catch (error) {
+                res.status(400).json({success:false , msg: "Internal Server Error"+error.message });
+            }
+})
+
+
+
 module.exports = router; 

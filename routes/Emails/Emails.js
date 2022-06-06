@@ -25,31 +25,12 @@ async (req,res)=>{
         return res.status(401).json({ success:false , msg: "All Fields are Required" })
     }
     try {
-        let id = req.body.to; 
-        if(!id){
-            return res.status(400).json({success:false,msg:'Invalid Id'});
-        }
-        let users; 
-        // choosing btw subscribers & unsubscribers 
-        if(id==="subscribers"){
-            users = await Users.find({subscribed:true}); 
-        }
-        else if(id==="unsubscribers"){
-            users = await Users.find({subscribed:false}); 
-        }
-        else{
-            return res.status(400).json({success:false,msg:'Invalid Id'});
-        }
+        let emails = req.body.emailids; 
 
-        // finding gmails from list 
-        let receivers = await users.map(element =>{
-            if(element.emailVerified){
-                return element.email 
-            }
-        })
-        if(receivers.length===0){
-            return res.status(400).json({success:false,msg:"No Users Found"})
+        if(emails.length == 0){
+            return res.status(400).json({success:false,msg:"No Emails to send Mail"})
         }
+        
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -59,7 +40,7 @@ async (req,res)=>{
         });
         let info = await transporter.sendMail({
             from: config.email.id,
-            to: receivers,
+            to: emails,
             subject:req.body.subject,
             text:req.body.text 
           }, function (error, info) {
