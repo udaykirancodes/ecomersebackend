@@ -9,10 +9,12 @@ const SellSchema = new mongoose.Schema({
         type:String, 
     }, 
     type : {
-        type:String,
+        type:String, 
+        required:true 
     }, 
     phone:{
         type:String,
+        required:true 
     },
     details :{
         type:Object,
@@ -24,4 +26,4 @@ const SellSchema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('Sell',SellSchema);
+module.exports = mongoose.model('Scrap',SellSchema);

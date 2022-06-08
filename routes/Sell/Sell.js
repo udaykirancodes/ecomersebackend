@@ -3,13 +3,13 @@ const {body , validationResult } = require('express-validator');
 
 // importing models 
 const Sell = require('../../models/Sell'); 
-
+const Scrap = require('../../models/Scrap'); 
 // routes 
 router.post('/sell', 
 [
     body('email','Invalid Email').isEmail(),
     body('fullName','Name Requried').isLength({min:2}),
-    body('vechileNumber','Number Required').isLength({min:4})
+    body('phone','Mobile Number Requried').isLength({min:6})
 ]
 ,
 async(req,res)=>{
@@ -18,24 +18,85 @@ async(req,res)=>{
         return res.status(401).json({ success:false , msg: "Invalid Input" })
     }
     try {
-        // find if already exists 
-        let sell = await Sell.findOne({vechileNumber : req.body.vechileNumber}); 
 
-        if(sell){
-            return res.status(400).json({success:false,msg:"Data Found With this Registered Vechile Number"}); 
+        // if selling(from user) is related to vechiles & automobiles 
+        if(req.body.type=='automobile'){
+            let sell = new Sell({
+                type:req.body.type, 
+                email:req.body.email || '',
+                fullName:req.body.fullName,
+                phone:req.body.phone, 
+                details : {
+                    vechileName:req.body.vechileName,
+                    vechileNumber:req.body.vechileNumber
+                }
+            })
+            let newSell = await sell.save(); 
+            return res.status(200).json({success:true,data:newSell}); 
         }
-
-        sell = new Sell({
-            email:req.body.email,
-            fullName:req.body.fullName,
-            vechileNumber:req.body.vechileNumber,
-            phone:req.body.phone, 
-            vechileName:req.body.vechileName 
-        })
-
-        let newSell = await sell.save(); 
-
-        res.status(200).json({success:true,data:newSell}); 
+        // if selling(from user) is related to metal 
+        else if(req.body.type=='metal'){
+            let sell = new Sell({
+                type:req.body.type, 
+                email:req.body.email || '',
+                fullName:req.body.fullName,
+                phone:req.body.phone, 
+                details : {
+                    weight:req.body.weight,
+                    metalType:req.body.metalType  
+                }
+            })
+            let newSell = await sell.save(); 
+            return res.status(200).json({success:true,data:newSell}); 
+        }
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({success:false,msg:'Internal Server Error'});
+    }
+    
+})
+router.post('/scrap', 
+[
+    body('email','Invalid Email').isEmail(),
+    body('fullName','Name Requried').isLength({min:2}),
+    body('phone','Mobile Number Requried').isLength({min:6})
+]
+,
+async(req,res)=>{
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(401).json({ success:false , msg: "Invalid Input" })
+    }
+    try {
+        if(req.body.type=='automobile'){
+            let scrap = new Scrap({
+                type:req.body.type, 
+                email:req.body.email || '',
+                fullName:req.body.fullName,
+                phone:req.body.phone, 
+                details : {
+                    vechileName:req.body.vechileName,
+                    vechileNumber:req.body.vechileNumber
+                }
+            })
+            let newScrap = await scrap.save(); 
+            return res.status(200).json({success:true,data:scrap}); 
+        }
+        // if selling(from user) is related to metal 
+        else if(req.body.type=='metal'){
+            let scrap = new Scrap({
+                type:req.body.type, 
+                email:req.body.email || '',
+                fullName:req.body.fullName,
+                phone:req.body.phone, 
+                details : {
+                    weight:req.body.weight,
+                    metalType:req.body.metalType  
+                }
+            })
+            let newscrap = await scrap.save(); 
+            return res.status(200).json({success:true,data:newscrap}); 
+        }
 
     } catch (error) {
         console.log(error.message);
@@ -43,5 +104,4 @@ async(req,res)=>{
     }
     
 })
-
 module.exports = router ; 

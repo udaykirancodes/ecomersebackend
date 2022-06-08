@@ -29,7 +29,7 @@ router.use('/emails',Emails);
 // wishlist routes 
 router.use('/wishlist',WishList)
 
-// sell route 
+// sell route (customer selling )
 router.use('/sell',Sell); 
 
 // base root 
