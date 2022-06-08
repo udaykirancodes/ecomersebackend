@@ -10,7 +10,6 @@ const Emails = require('./Emails/index');
 const WishList = require('./WishList/index'); 
 const Sell = require('./Sell/index'); 
 
-
 //authentication routes 
 router.use('/auth',Auth); 
 
@@ -31,6 +30,7 @@ router.use('/wishlist',WishList)
 
 // sell route (customer selling )
 router.use('/sell',Sell); 
+
 
 // base root 
 router.get('/',(req,res)=>{
