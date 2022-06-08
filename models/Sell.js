@@ -10,9 +10,11 @@ const SellSchema = new mongoose.Schema({
     }, 
     type : {
         type:String,
+        required:true 
     }, 
     phone:{
         type:String,
+        required:true 
     },
     details :{
         type:Object,
