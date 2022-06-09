@@ -321,10 +321,9 @@ router.post('/googlelogin', async (req, res) => {
                         const hashedPassword = await bcrypt.hash(generatedPassword, salt)
                         try {
                             user = new User({
-                                email:req.body.email,
+                                email:email,
                                 password:hashedPassword,
-                                phone:req.body.phone,
-                                name:req.body.name,
+                                name:name,
                                 emailVerified:true,
                                 subscribed:true,
                                 otp: null  
@@ -342,7 +341,6 @@ router.post('/googlelogin', async (req, res) => {
                             res.status(401).json({ success, msg: "Internal Server Error" })
                         }
                     }
-
                 }
                 else{
                     res.status(404).json({success:false , msg:"Email Not Verified"})

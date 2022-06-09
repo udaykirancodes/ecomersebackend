@@ -1,7 +1,7 @@
 const dotenv = require('dotenv'); 
 dotenv.config(); 
 module.exports = {
-    port:process.env.PORT,
+    port:process.env.PORT || 8000 ,
     mongoose:{
         url:process.env.MONGO_URL,
         options:{
@@ -20,7 +20,7 @@ module.exports = {
     oauth:{
         client_id:process.env.CLIENT_ID,
         client_secret:process.env.CLIENT_SECRET,
-        client_redirect:process.env.REDIRECT_URI,
-        client_refresh_token:process.env.REFRESH_TOKEN
+    //     client_redirect:process.env.REDIRECT_URI,
+    //     client_refresh_token:process.env.REFRESH_TOKEN
     }
 }

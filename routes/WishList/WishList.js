@@ -86,13 +86,4 @@ async (req,res)=>{
     }
 })
 
-
-// reference code 
-// if (!post.likes.includes(req.body.userId)) {
-//     await post.updateOne({ $push: { likes: req.body.userId } });
-//     res.status(200).json("The post has been liked");
-//   } else {
-//     await post.updateOne({ $pull: { likes: req.body.userId } });
-//     res.status(200).json("The post has been disliked");
-//   }
 module.exports = router; 

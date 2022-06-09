@@ -14,7 +14,7 @@ const Sell = require('./Sell/index');
 router.use('/auth',Auth); 
 
 //product routes 
-router.use('/product',Products);
+router.use('/products',Products);
 
 // blog product routers 
 router.use('/blogs',Blogs)
