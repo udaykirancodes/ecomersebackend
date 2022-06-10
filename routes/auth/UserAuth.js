@@ -220,7 +220,15 @@ async (req,res)=>{
         res.status(500).json({success:false,msg:'Internal Server Error'})
     }
 })
-
+const FetchAdmin = require('../../middlewares/FetchAdmin'); 
+router.get('/getall',FetchAdmin , async(req,res)=>{
+    try {
+        let users = await User.find().select('-password'); 
+        res.status(200).json({success:true,users:users})
+    } catch (error) {
+        res.status(500).json({success:false,msg:'Internal Server Error'})
+    }
+})
 
 // password reset || forgot password 
 
@@ -284,7 +292,7 @@ Kindly do not share with anybody!
 // google authentication 
 
 // Google Login 
-const { OAuth2Client } = require('google-auth-library')
+const { OAuth2Client } = require('google-auth-library');
 
 const CLIENT_ID = config.oauth.client_id 
 
