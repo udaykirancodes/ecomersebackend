@@ -126,6 +126,30 @@ async(req,res)=>{
         res.status(500).json({success:false,msg:'Internal Server Error'});
     }
 })
+
+
+// Delete a Blog :  
+router.delete('/delete',
+FetchAdmin , 
+async(req,res)=>{
+    try {
+        // checking if id exists 
+        const id = req.body.id ;
+        if(!id){
+            return res.status(200).json({success:false,msg:"Id Needed"}); 
+        } 
+
+        // finding blog with the blog 
+        let blog = await Blogs.findByIdAndDelete(id);
+        if(!blog){
+            return res.status(400).json({success:false,msg:"cannot find a blog"}); 
+        }
+        res.status(200).json({success:true,data:"Blog is Deleted"});
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({success:false,msg:'Internal Server Error'});
+    }
+})
 // Undo Delete a Blog :  
 router.put('/undo',
 FetchAdmin , 
