@@ -42,7 +42,7 @@ async(req,res)=>{
         })
 
         let newblog = await blog.save(); 
-        res.status(200).json({success:false , data:newblog}); 
+        res.status(200).json({success:true , blog:newblog}); 
         
     } catch (error) {
         console.log(error.message);
@@ -56,7 +56,7 @@ async(req,res)=>{
     try {
         let blogs = await Blogs.find(); 
         if(blogs){
-            res.status(200).json({success:false , data:blogs}); 
+            res.status(200).json({success:true , data:blogs}); 
         }
     } catch (error) {
         console.log(error.message);
