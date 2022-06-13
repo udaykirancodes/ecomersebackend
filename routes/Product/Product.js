@@ -64,17 +64,46 @@ async(req,res)=>{
 
 
 // Delete Product :: AdminAccess 
-router.delete('/delete'
+router.put('/delete'
 ,FetchAdmin ,
 async(req,res)=>{
     try {
     
-        let product = await Product.findByIdAndDelete(req.body.id); 
+        let product = await Product.findByIdAndUpdate(req.body.id); 
 
         if(!product){
             return res.status(400).json({success:false,msg:"Product is Not Available"})
         }
+
+        product.isDeleted = true 
+
+        await product.save(); 
+        
         res.status(200).json({success:true,data:"product is deleted"}); 
+    
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({success:false,msg:'Internal Server Error'});
+    }
+
+})
+// Undo Delete A ß Product :: AdminAccess 
+router.put('/undo'
+,FetchAdmin ,
+async(req,res)=>{
+    try {
+    
+        let product = await Product.findByIdAndUpdate(req.body.id); 
+
+        if(!product){
+            return res.status(400).json({success:false,msg:"Product is Not Available"})
+        }
+        if(!product.isDeleted){
+            return res.status(400).json({success:false , msg:"Product is Not in Deleted List"})
+        }
+        product.isDeleted = false ;  
+        await product.save(); 
+        res.status(200).json({success:true,data:"product is retrived back"}); 
     
     } catch (error) {
         console.log(error.message);

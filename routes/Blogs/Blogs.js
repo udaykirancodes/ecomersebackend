@@ -38,7 +38,8 @@ async(req,res)=>{
         let blog = new Blogs({
             title:req.body.title , 
             description:req.body.description,
-            img : req.file.path  
+            img : req.file.path , 
+            isDeleted:false 
         })
 
         let newblog = await blog.save(); 
@@ -102,7 +103,7 @@ async(req,res)=>{
     }
 })
 // Delete a Blog :  
-router.delete('/delete',
+router.put('/delete',
 FetchAdmin , 
 async(req,res)=>{
 
@@ -113,11 +114,42 @@ async(req,res)=>{
             return res.status(200).json({success:false,msg:"Id Needed"}); 
         } 
         // finding blog with the blog 
-        let blog = await Blogs.findByIdAndDelete(id); 
+        let blog = await Blogs.findByIdAndUpdate(id);
         if(!blog){
             return res.status(200).json({success:false,msg:"cannot find a blog"}); 
         }
+        blog.isDeleted = true   
+        let newblog = await blog.save(); 
         res.status(200).json({success:true,data:"blog is deleted"});
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({success:false,msg:'Internal Server Error'});
+    }
+})
+// Undo Delete a Blog :  
+router.put('/undo',
+FetchAdmin , 
+async(req,res)=>{
+
+    try {
+        // checking if id exists 
+        const id = req.body.id ;
+        if(!id){
+            return res.status(200).json({success:false,msg:"Id Needed"}); 
+        } 
+
+        // finding blog with the blog 
+        let blog = await Blogs.findByIdAndUpdate(id);
+        if(!blog){
+            return res.status(400).json({success:false,msg:"cannot find a blog"}); 
+        }
+
+        if(!blog.isDeleted){
+            return res.status(400).json({success:false,msg:"Blog is Not Deleted"})
+        }
+        blog.isDeleted = false    
+        let newblog = await blog.save(); 
+        res.status(200).json({success:true,data:"blog is retrived again"});
     } catch (error) {
         console.log(error.message);
         res.status(500).json({success:false,msg:'Internal Server Error'});

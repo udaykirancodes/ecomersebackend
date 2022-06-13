@@ -10,6 +10,11 @@ const AdminSchema = new mongoose.Schema({
         type:String,
         required : true 
     },
+    isDeleted:{
+        type:Boolean,
+        required:true , 
+        default:false 
+    }, 
     img:{
         type:String,
         required:true 

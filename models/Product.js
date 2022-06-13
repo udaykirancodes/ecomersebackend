@@ -13,6 +13,11 @@ const ProductSchema = new mongoose.Schema({
         type:Object,
         required:true  
     },
+    isDeleted:{
+        type:Boolean,
+        required:true , 
+        default:false 
+    }, 
     price:{
         type:Number,
         required:true 
