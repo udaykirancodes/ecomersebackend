@@ -231,6 +231,15 @@
 | `weight`   | `` | **Required**. if type is metal  |
 | `metalType`   | `string` | **Required**. if type is metal  |
 
+#### GET ALL SELL  products 
+```http
+  GET /sell/getsell  
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `adminToken`   | `string` | **Required**. Header Parameter|
+
 ---
 ### SCRAP  : : Routes  
 
@@ -251,6 +260,16 @@
 | `metalType`   | `string` | **Required**. if type is metal  |
 
 
+#### GET ALL SCRAP Products  
+```http
+  GET /sell/getscrap  
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `adminToken`   | `string` | **Required**. Header Parameter|
+
+
 ---
 ### Product  : : Routes  
 
@@ -269,6 +288,3 @@
 | `VechileName`   | `string` | **Required**. if type is automobile  |
 | `weight`   | `` | **Required**. if type is metal  |
 | `metalType`   | `string` | **Required**. if type is metal  |
-
-
-

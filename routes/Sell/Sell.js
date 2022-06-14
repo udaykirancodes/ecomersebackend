@@ -4,21 +4,23 @@ const {body , validationResult } = require('express-validator');
 // importing models 
 const Sell = require('../../models/Sell'); 
 const Scrap = require('../../models/Scrap'); 
+const FetchAdmin = require('../../middlewares/FetchAdmin');
 // routes 
 router.post('/sell', 
 [
     body('email','Invalid Email').isEmail(),
     body('fullName','Name Requried').isLength({min:2}),
     body('phone','Mobile Number Requried').isLength({min:6})
-]
-,
+],
 async(req,res)=>{
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(401).json({ success:false , msg: "Invalid Input" })
     }
     try {
-
+        if(!req.body.type){
+            return res.status(400).json({success:false,msg:"Type is Needed"}); 
+        }
         // if selling(from user) is related to vechiles & automobiles 
         if(req.body.type=='automobile'){
             let sell = new Sell({
@@ -55,6 +57,37 @@ async(req,res)=>{
     }
     
 })
+
+// get all the selling products 
+router.get('/getsell',
+FetchAdmin,
+async (req,res)=>{
+    try {
+        let products = await Sell.find(); 
+        if(products){
+            return res.status(200).json({success:true,products:products}); 
+        }
+    } catch (error) {
+        console.log(error.message); 
+        res.status(500).json({success:false,msg:'Internal Server Error'});
+    }
+})
+
+// get all the scrap products 
+router.get('/getscrap',
+FetchAdmin,
+async (req,res)=>{
+    try {
+        let products = await Scrap.find(); 
+        if(products){
+            return res.status(200).json({success:true,products:products}); 
+        }
+    } catch (error) {
+        console.log(error.message); 
+        res.status(500).json({success:false,msg:'Internal Server Error'});
+    }
+})
+
 router.post('/scrap', 
 [
     body('email','Invalid Email').isEmail(),
@@ -68,6 +101,9 @@ async(req,res)=>{
         return res.status(401).json({ success:false , msg: "Invalid Input" })
     }
     try {
+        if(!req.body.type){
+            return res.status(400).json({success:false,msg:"Type is Needed"}); 
+        }
         if(req.body.type=='automobile'){
             let scrap = new Scrap({
                 type:req.body.type, 

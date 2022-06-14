@@ -40,6 +40,7 @@ async(req,res)=>{
         let product = new Product({
             name:req.body.name , 
             category:req.body.category,
+            description:req.body.description,
             details:{
                 brand:req.body.brand,
                 modelname:req.body.modelname,
@@ -50,7 +51,6 @@ async(req,res)=>{
                 return element.path 
             })
         })
-        console.log(req.files[0].path); 
         let newProduct = await product.save(); 
 
         res.status(200).json({success:true,data:newProduct}); 
