@@ -5,10 +5,19 @@ const ProductSchema = new mongoose.Schema({
         required : true,
         min:5
     },
+    description:{
+        type:String,
+        required:false 
+    }, 
     category:{
         type:String,
         required:true 
     },
+    subCategory:{
+        type:Array,
+        required:false ,
+        default:[]
+    }, 
     details:{
         type:Object,
         required:true  

@@ -26,34 +26,62 @@ const upload = multer({ storage : storage })
 // add product route , AdminAccess 
 router.post('/add',
 [
-    body('name', 'Name Should be atleast 5 characters').isLength({min:5}),
+    body('name', 'Name Should be atleast 3 characters').isLength({min:3}),
     body('price', 'Price Should not be empty').isNumeric()
 ],
 FetchAdmin ,
 upload.array('images', 5),
 async(req,res)=>{
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(401).json({ success:false , msg: "All Fields are Required" })
-    }
-    try {
-        let product = new Product({
-            name:req.body.name , 
-            category:req.body.category,
-            details:{
-                brand:req.body.brand,
-                modelname:req.body.modelname,
-                type:req.body.type
-            },
-            price:req.body.price,
-            img:req.files.map(element => {
-                return element.path 
-            })
-        })
-        console.log(req.files[0].path); 
-        let newProduct = await product.save(); 
 
-        res.status(200).json({success:true,data:newProduct}); 
+    // if (!errors.isEmpty()) {
+    //     return res.status(401).json({ success:false , msg: "All Fields are Required"})
+    // }
+    try {
+        if(!req.body.category){
+            return res.status(400).json({success:false,msg:"Category Required"}); 
+        }
+        if(req.body.category === "automobile"){
+            let product = new Product({
+                name:req.body.name , 
+                category:req.body.category,
+                description:req.body.description,
+                category:req.body.category, 
+                subCategory:req.body.subCategory, 
+                details:{
+                    brand:req.body.brand,
+                    modelname:req.body.modelname,
+                    fuelType:req.body.fuelType 
+                },
+                price:req.body.price,
+                img:req.files.map(element => {
+                    return element.path 
+                })
+            })
+            let newProduct = await product.save(); 
+            return res.status(200).json({success:true,data:newProduct}); 
+        }
+        if(req.body.category === "metal"){
+            let product = new Product({
+                name:req.body.name , 
+                category:req.body.category,
+                description:req.body.description,
+                category:req.body.category, 
+                subCategory:req.body.subCategory, 
+                details:{
+                    brand:req.body.brand,
+                    weight:req.body.weight,
+                    metalType:req.body.metalType,     // sheet or pipe 
+                    thickness:req.body.thickness                
+                },
+                price:req.body.price,
+                img:req.files.map(element => {
+                    return element.path 
+                })
+            })
+            let newProduct = await product.save(); 
+            return res.status(200).json({success:true,data:newProduct}); 
+        }
     
     } catch (error) {
         console.log(error.message);
