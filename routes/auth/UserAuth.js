@@ -113,13 +113,14 @@ async(req,res)=>{
         }
     
         //checking if user exists 
-        let VerificationUser = await User.findOneAndUpdate({email:req.body.email}); 
+        
+        let VerificationUser = await User.findOne({email:req.body.email}); 
         if(!VerificationUser){
             return res.status(400).json({success:false , msg:"User Doesn't Exists With This Email"})
         }
-
+        console.log(VerificationUser.otp +' '+req.body.otp); 
         // validating (if otp is matched)
-        if(VerificationUser.otp===req.body.otp){
+        if(VerificationUser.otp === req.body.otp){
             VerificationUser.emailVerified = true; 
             VerificationUser.subscribed=true 
             // updating the password 
@@ -152,8 +153,6 @@ async(req,res)=>{
     }
 
 })
-
-
 
 // 2.Login a user 
 router.post('/login', 

@@ -20,9 +20,10 @@ FetchAdmin,
     body('text').isLength({min:3}),
 ], 
 async (req,res)=>{
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(401).json({ success:false , msg: "All Fields are Required" })
+        return res.status(401).json({ success:false , msg: "All Fields are Required" ,errors})
     }
     try {
         let emails = req.body.emailids; 
@@ -48,7 +49,7 @@ async (req,res)=>{
                   console.log(error.message)
                   res.status(400).json({success:false,msg:"Error in sending email",error:error.message})
                 } else {
-                //   console.log('Mail Sent')
+                  console.log('Mail Sent')
                   res.status(200).json({success:true,msg:"Email Sent Successfully"}); 
               }
           });

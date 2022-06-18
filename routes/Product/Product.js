@@ -46,7 +46,6 @@ async(req,res)=>{
                 name:req.body.name , 
                 category:req.body.category,
                 description:req.body.description,
-                category:req.body.category, 
                 subCategory:req.body.subCategory, 
                 details:{
                     brand:req.body.brand,
@@ -66,13 +65,11 @@ async(req,res)=>{
                 name:req.body.name , 
                 category:req.body.category,
                 description:req.body.description,
-                category:req.body.category, 
                 subCategory:req.body.subCategory, 
                 details:{
-                    brand:req.body.brand,
-                    weight:req.body.weight,
-                    metalType:req.body.metalType,     // sheet or pipe 
-                    thickness:req.body.thickness                
+                    brand:req.body.brand || '',
+                    modelname:req.body.modelname || '',
+                    metalType:req.body.metalType || '' ,     
                 },
                 price:req.body.price,
                 img:req.files.map(element => {
@@ -150,9 +147,9 @@ FetchAdmin ,
 upload.array('images', 5),
 async(req,res)=>{
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(401).json({ success:false , msg: "All Fields are Required" })
-    }
+    // if (!errors.isEmpty()) {
+    //     return res.status(401).json({ success:false , msg: "All Fields are Required" })
+    // }
     try {
 
         let product = await Product.findByIdAndUpdate(req.body.id); 
@@ -160,40 +157,54 @@ async(req,res)=>{
         if(!product){
             return res.status(400).json({success:false,msg:"Product is Not Available"})
         }
-        const {name ,category , price , brand , modelname , type } = req.body ; 
-        if(name){
-            product.name = name;
+        if(!req.body.category){
+            return res.status(400).json({success:false,msg:"Category Required"}); 
         }
-        if(category){
-            product.category =category
-        }
-        if(price){
-            product.price = price
-        }
-        if(req.files[0]){
-            product.img = req.files.map(element => {
-                return element.path 
-            })
-        }
-        if(brand){
-            product.details.brand = brand;
-        }
-        if(modelname){
-            product.details.modelname =modelname 
-        }
-        if(type){
-            product.details.type = type 
-        }
+        if(req.body.category === "automobile"){
+            product.name=req.body.name || product.name 
+            product.category=req.body.category || product.category
+            product.description=req.body.description ? req.body.description : product.description
+            product.subCategory=req.body.subCategory || product.subCategory 
+            product.details={
+                brand:req.body.brand ? req.body.brand : product.details.brand,
+                modelname:req.body.modelname ? req.body.modelname : product.details.modelname,
+                fuelType:req.body.fuelType ? req.body.fuelType : product.details.fuelType
+            },
+            product.price=req.body.price || product.price
 
-        let newProduct = await product.save(); 
+            if(req.files){
+                product.img = req.files.map(element => {
+                    return element.path 
+                })
+            }
+            let newProduct = await product.save(); 
+            return res.status(200).json({success:true,product:newProduct}); 
+        }
+        if(req.body.category === "metal"){
+            product.name=req.body.name || product.name
+            product.category=req.body.category || product.category
+            product.description=req.body.description || product.description
+            product.subCategory=req.body.subCategory || product.subCategory 
+            product.details={
+                brand:req.body.brand ? req.body.brand : product.details.brand,
+                modelname:req.body.modelname ? req.body.modelname : product.details.modelname,
+                metalType:req.body.metalType ? req.body.metalType : product.details.metalType,     
+            }
+            product.price=req.body.price || product.price
 
-        res.status(200).json({success:true,data:newProduct}); 
+            if(req.files){
+                product.img = req.files.map(element => {
+                    return element.path 
+                })
+            }
+            let newProduct = await product.save(); 
+            res.status(200).json({success:true,product:newProduct}); 
+        }
     
     } catch (error) {
-        console.log(error.message);
+        console.log(error);
         res.status(500).json({success:false,msg:'Internal Server Error'});
     }
-
 })
 
 module.exports = router ; 
