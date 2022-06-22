@@ -5,29 +5,42 @@ function Pagination(model){
       let startIndex = (page - 1) * limit ; 
       let endIndex = (page ) * limit ;
       // let pagination = {}; 
+      let search = req.query.search; 
+
+      let query = {}; 
+
 
       try {
 
-          let length = await model.count(); 
+        //   let length = await model.count(); 
 
           let pagination = {
               results : {},
               next : null , 
               previous : null 
           }
-          
-          pagination.results = await model.find().skip(startIndex).limit(limit); 
-          if(endIndex < length){
-              pagination.next = true 
+          // searching 
+          if(req.query.search){
+                query = {
+                    $or:[
+                        {"name":{$regex:`${search}` , $options:'i'}},
+                        {"category":{$regex:`${search}` , $options:'i'}},
+                    ]
+                }
+                console.log(req.query.search); 
           }
-          else{
-              pagination.next = false ; 
+          
+          pagination.results = await model.find(query).skip(startIndex).limit(limit); 
+          
+          let length = pagination.results.length // length 
+
+          pagination.current = page; 
+
+          if(endIndex < length){
+              pagination.next = page + 1; 
           }
           if(startIndex > 0){
-              pagination.previous = true 
-          }
-          else{
-              pagination.previous = false ; 
+              pagination.previous = page - 1;   
           }
           req.pagination = pagination; 
           next(); 

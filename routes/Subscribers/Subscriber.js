@@ -3,6 +3,7 @@ const mongoose = require('mongoose'); // importing models
 const User = require('../../models/User');
 
 const FetchAdmin = require('../../middlewares/FetchAdmin'); 
+const Pagination = require('../../middlewares/Pagination');
 
 // subscribe a user to the marketing  
 router.post('/subscribe/:id' , async (req,res)=>{
@@ -65,10 +66,11 @@ router.delete('/unsubscribe/:id' , async (req,res)=>{
         res.status(500).json({success:false,msg:'Internal Server Error'});
     }
 })
-router.get('/getall',FetchAdmin , async (req , res)=> {
+router.get('/getall', FetchAdmin , Pagination(User) , async (req , res)=> {
     try {
-        let subscribers = await User.find({emailVerified : true}).select("-password"); 
-        res.status(200).json({success:true,subscribers:subscribers}); 
+        if(req.pagination){
+            res.status(200).json({success:true,subscribers:req.pagination}); 
+        }
     } catch (error) {
         res.status(500).json({success:false,msg:'Internal Server Error'});
     }

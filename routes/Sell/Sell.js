@@ -5,6 +5,7 @@ const {body , validationResult } = require('express-validator');
 const Sell = require('../../models/Sell'); 
 const Scrap = require('../../models/Scrap'); 
 const FetchAdmin = require('../../middlewares/FetchAdmin');
+const Pagination = require('../../middlewares/Pagination');
 // routes 
 router.post('/sell', 
 [
@@ -59,13 +60,12 @@ async(req,res)=>{
 })
 
 // get all the selling products 
-router.get('/getsell',
+router.get('/getsell', Pagination(Sell), 
 FetchAdmin,
 async (req,res)=>{
     try {
-        let products = await Sell.find(); 
-        if(products){
-            return res.status(200).json({success:true,products:products}); 
+        if(req.pagination){
+            return res.status(200).json({success:true,products:req.pagination}); 
         }
     } catch (error) {
         console.log(error.message); 
@@ -74,13 +74,11 @@ async (req,res)=>{
 })
 
 // get all the scrap products 
-router.get('/getscrap',
-FetchAdmin,
+router.get('/getscrap',FetchAdmin, Pagination(Scrap), 
 async (req,res)=>{
     try {
-        let products = await Scrap.find(); 
-        if(products){
-            return res.status(200).json({success:true,products:products}); 
+        if(req.pagination){
+            return res.status(200).json({success:true,products:req.pagination}); 
         }
     } catch (error) {
         console.log(error.message); 
