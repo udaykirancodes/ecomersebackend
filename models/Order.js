@@ -12,4 +12,4 @@ const BuySchema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('Buy',BuySchema);
+module.exports = mongoose.model('Order',BuySchema);

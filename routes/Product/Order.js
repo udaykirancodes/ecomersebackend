@@ -5,11 +5,11 @@ const mongoose = require('mongoose')
 const FetchUser = require('../../middlewares/FetchUser');
 
 // importing Models 
-const Buy = require('../../models/Buy');
+const Order = require('../../models/Order');
 const User = require('../../models/User');
 const Product = require('../../models/Product');
 
-// Route :: Buy Product :: User Protected Route 
+// Route :: order Product :: User Protected Route 
 router.post('/',
     FetchUser,
     async (req, res) => {
@@ -25,7 +25,7 @@ router.post('/',
 
             // find if user exists 
             let user = await User.findById(userid);
-            if (user.length == 0) {
+            if (user) {
                 return res.status(400).json({ success: false, msg: "User Doesn't exists" })
             }
 
@@ -36,33 +36,33 @@ router.post('/',
             }
 
             // find if exists 
-            let buy = await Buy.findOne({ userid: userid });
+            let order = await Order.findOne({ userid: userid });
 
-            if (buy) {
-                if (!buy.list.includes(productid)) {
-                    await buy.updateOne({ $push: { list: productid } });
-                    return res.status(200).json({ success: true, msg: "Item Added to Buy Section" })
+            if (order) {
+                if (!order.list.includes(productid)) {
+                    await order.updateOne({ $push: { list: productid } });
+                    return res.status(200).json({ success: true, msg: "Item Added to order Section" })
                 }
                 else {
-                    return res.status(400).json({ success: false, msg: "Item already added to buy section" })
+                    return res.status(400).json({ success: false, msg: "Item already added to order section" })
                 }
             }
             else {
-                buy = new Buy({
+                order = new Order({
                     userid: userid,
                     list: [productid]
                 })
-                let newbuy = await buy.save();
-                res.status(200).json({ success: true, newbuy });
+                let neworder = await order.save();
+                res.status(200).json({ success: true, neworder });
             }
 
         } catch (error) {
-            console.log(error.message);
+            console.log(error);
             res.status(500).json({ success: false, msg: "Internal Server Error" });
         }
     })
 
-// buying cancelling 
+// ordering cancelling 
 router.put('/cancel',
     FetchUser,
     async (req, res) => {
@@ -88,18 +88,18 @@ router.put('/cancel',
 
             // delete here 
             // find if exists 
-            let buy = await Buy.findOne({ userid: userid });
+            let order = await Order.findOne({ userid: userid });
 
-            if (!buy) {
+            if (!order) {
                 return res.status(400).json({ success: false, msg: "Your List is Empty" });
             }
 
-            if (buy.list.includes(productid)) {
-                await buy.updateOne({ $pull: { list: productid } });
-                return res.status(200).json({ success: true, msg: "Item Removed from Buy Section" })
+            if (order.list.includes(productid)) {
+                await order.updateOne({ $pull: { list: productid } });
+                return res.status(200).json({ success: true, msg: "Item Removed from order Section" })
             }
             else {
-                return res.status(400).json({ success: false, msg: "Item Not in  buy section" })
+                return res.status(400).json({ success: false, msg: "Item Not in  order section" })
             }
 
         } catch (error) {
@@ -112,8 +112,8 @@ router.get('/get',
     async (req, res) => {
         try {
             let id = new mongoose.Types.ObjectId(req.user.id);
-            let UserBuyings = await Buy.find({ userid: id });
-            res.status(200).json({ success: false, data: UserBuyings });
+            let UserOrders = await Order.find({ userid: id });
+            res.status(200).json({ success: false, data: UserOrders });
         } catch (error) {
             console.log(error.message);
             res.status(500).json({ success: false, msg: "Internal Server Error" });
