@@ -41,6 +41,11 @@ const UserSchema = new mongoose.Schema({
         required:false, 
         default:[]
     }, 
+    orders : {
+        type:Array,
+        required:false,
+        default:[]
+    },
     date:{
         type:Date,
         default:Date.now 

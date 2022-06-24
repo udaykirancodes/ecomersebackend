@@ -65,7 +65,7 @@ FetchAdmin,
 async (req,res)=>{
     try {
         if(req.pagination){
-            return res.status(200).json({success:true,products:req.pagination}); 
+            return res.status(200).json({success:true,pagination:req.pagination}); 
         }
     } catch (error) {
         console.log(error.message); 
@@ -78,7 +78,7 @@ router.get('/getscrap',FetchAdmin, Pagination(Scrap),
 async (req,res)=>{
     try {
         if(req.pagination){
-            return res.status(200).json({success:true,products:req.pagination}); 
+            return res.status(200).json({success:true,pagination:req.pagination}); 
         }
     } catch (error) {
         console.log(error.message); 
