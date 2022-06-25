@@ -9,6 +9,7 @@ const Subscribers = require('./Subscribers/index');
 const Emails = require('./Emails/index');
 const WishList = require('./WishList/index');
 const Sell = require('./Sell/index');
+const Orders = require('./Orders/Orders')
 
 //authentication routes 
 router.use('/auth', Auth);
@@ -30,6 +31,9 @@ router.use('/wishlist', WishList)
 
 // sell route (customer selling )
 router.use('/sell', Sell);
+
+// order routes 
+router.use('/orders', Orders);
 
 
 // base root 
