@@ -22,7 +22,13 @@ const AdminSchema = new mongoose.Schema({
     date:{
         type:Date,
         default:Date.now 
+    },
+    category:{
+        type:Array,
+        default:[]
     }
-})
+},
+{timestamps:true}
+)
 
 module.exports = mongoose.model('Blogs',AdminSchema);

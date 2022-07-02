@@ -36,6 +36,7 @@ const BuySchema = new mongoose.Schema({
         required : false 
     },
 
-})
+},
+{timestamps:true})
 
 module.exports = mongoose.model('Order',BuySchema);

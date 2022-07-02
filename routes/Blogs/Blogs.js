@@ -39,7 +39,8 @@ async(req,res)=>{
             title:req.body.title , 
             description:req.body.description,
             img : req.file.path , 
-            isDeleted:false 
+            isDeleted:false ,
+            category:req.body.category  // array
         })
 
         let newblog = await blog.save(); 
@@ -50,6 +51,7 @@ async(req,res)=>{
         res.status(500).json({success:false,msg:'Internal Server Error'});
     }
 })
+
 // Get All Blogs :  
 router.get('/getall',
 async(req,res)=>{

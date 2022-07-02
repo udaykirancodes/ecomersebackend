@@ -14,11 +14,8 @@ const AdminSchema = new mongoose.Schema({
         type:String,
         min:3,
         required : true 
-    },
-    date:{
-        type:Date,
-        default:Date.now 
     }
-})
+},
+{timestamps:true})
 
 module.exports = mongoose.model('Admin',AdminSchema);
