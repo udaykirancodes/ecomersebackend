@@ -1,12 +1,15 @@
 const router = require('express').Router();
 const { body, validationResult } = require('express-validator');
 const multer  = require('multer')
-
+const mongoose = require('mongoose')
 // importing blog model 
 const Blogs = require('../../models/Blog');
 
 // importing middleware 
 const FetchAdmin = require('../../middlewares/FetchAdmin'); 
+const Categories = require('../../models/Categories');
+const Blog = require('../../models/Blog');
+const Pagination = require('../../middlewares/Pagination');
 
 
 const storage = multer.diskStorage({
@@ -20,7 +23,16 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage : storage })
 
-
+// get categories of blgos 
+router.get('/categories',async (req,res)=>{
+    try {
+        let all = await Categories.findOne().select("blogs"); 
+        let {blogs} = all 
+        res.status(200).json({success:true,data:blogs}); 
+    } catch (error) {
+        return res.status(500).json({success:false,msg:"Internal Server Error"}); 
+    }
+})
 
 // Add a Blog :  
 router.post('/add',
@@ -43,6 +55,37 @@ async(req,res)=>{
             category:req.body.category  // array
         })
 
+        // add categories to the categories section
+        let allCategories = await Categories.findOne(); 
+
+        // first time create model if there is no data 
+        if(!allCategories){
+            console.log('categories not found')
+            let a = new Categories({
+                blogs: req.body.category
+            })
+            await a.save(); 
+        }
+        // if we have the data then add new categories 
+        else{
+            let {category} = req.body;
+            console.log(category); 
+            // return ; 
+            let newCategories = []; 
+
+            // let aCategory = JSON.parse(category); 
+
+            category.forEach(element => {
+                if(!allCategories.blogs.includes(element)){
+                     newCategories.push(element); 
+                }
+            });
+            
+            await Categories.updateOne( { $addToSet: { blogs: { $each: newCategories } } });
+            // await Categories.updateOne({$pushAll: {blogs:['google','fb']}},{upsert:true});
+            
+        }
+
         let newblog = await blog.save(); 
         res.status(200).json({success:true , blog:newblog}); 
         
@@ -52,15 +95,36 @@ async(req,res)=>{
     }
 })
 
-// Get All Blogs :  
-router.get('/getall',
+// Get By Blogs by category :  
+router.get('/getall', Pagination(Blog), 
 async(req,res)=>{
 
     try {
-        let blogs = await Blogs.find(); 
-        if(blogs){
-            res.status(200).json({success:true , data:blogs}); 
+        if(!req.query.category && !req.query.page){
+            const blogs = await Blog.find(); 
+            return res.status(200).json({success:true , data : blogs})
         }
+        
+        res.status(200).json({success:true , data:req.pagination}); 
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({success:false,msg:'Internal Server Error'});
+    }
+})
+// Get Single Blog by Id ;   
+router.get('/:id',
+async(req,res)=>{
+    try {
+        let blog = null ; 
+        if(!mongoose.isValidObjectId(req.params.id)){
+            return res.status(400).json({success:false,msg:"Invalid Object"}); 
+        }
+
+        blog = await Blog.findById(req.params.id); 
+        if(!blog){
+            return res.status(400).json({success:false,msg:"Blog Not Found"}); 
+        }
+        return res.status(200).json({success:true,data:blog})
     } catch (error) {
         console.log(error.message);
         res.status(500).json({success:false,msg:'Internal Server Error'});

@@ -19,6 +19,16 @@ router.get('/all', Pagination(Product) ,async (req, res) => {
         res.status(500).json({ success: false, msg: 'Internal Server Error' });
     }
 })
+router.get('/category', Pagination(Product) ,async (req, res) => {
+    try {
+        if(req.pagination){
+            return res.status(200).json({success:true , pagination : req.pagination })
+        }
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ success: false, msg: 'Internal Server Error' });
+    }
+})
 router.get('/personalised/:number',
     FetchUser,
     async (req, res) => {

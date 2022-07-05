@@ -5,6 +5,7 @@ const multer  = require('multer')
 
 // importing model 
 const Product = require('../../models/Product'); 
+const Categories = require('../../models/Categories'); 
 
 //importing middleware for admin checking 
 const FetchAdmin = require('../../middlewares/FetchAdmin');  
@@ -22,6 +23,16 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage : storage })
 
+// get categories of blgos 
+router.get('/categories',async (req,res)=>{
+    try {
+        let all = await Categories.findOne().select("products"); 
+        let {products} = all 
+        res.status(200).json({success:true,data:products}); 
+    } catch (error) {
+        return res.status(500).json({success:false,msg:"Internal Server Error"}); 
+    }
+})
 
 // add product route , AdminAccess 
 router.post('/add',
@@ -41,6 +52,37 @@ async(req,res)=>{
         if(!req.body.category){
             return res.status(400).json({success:false,msg:"Category Required"}); 
         }
+
+        // add categories to the categories section
+        let allCategories = await Categories.findOne(); 
+
+        // first time create model if there is no data 
+        if(!allCategories){
+            console.log('categories not found')
+            let a = new Categories({
+                products : req.body.subCategory
+            })
+            await a.save(); 
+        }
+        // if we have the data then add new categories 
+        else{
+            let {subCategory} = req.body;
+            console.log(subCategory); 
+            let newCategories = []; 
+
+            if(subCategory.length){
+                subCategory.forEach(element => {
+                    if(!allCategories.products.includes(element)){
+                        newCategories.push(element); 
+                    }
+                });
+            }
+            console.log(newCategories); 
+            
+            await Categories.updateOne( { $addToSet: { products : { $each: newCategories } } });
+            // await Categories.updateOne({$pushAll: {blogs:['google','fb']}},{upsert:true});
+             return res.send('ey')
+         }
         if(req.body.category === "automobile"){
             let product = new Product({
                 name:req.body.name , 
@@ -76,6 +118,7 @@ async(req,res)=>{
                     return element.path 
                 })
             })
+        
             let newProduct = await product.save(); 
             return res.status(200).json({success:true,data:newProduct}); 
         }
