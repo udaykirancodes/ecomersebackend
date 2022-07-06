@@ -100,7 +100,7 @@ router.get('/getall', Pagination(Blog),
 async(req,res)=>{
 
     try {
-        if(!req.query.category && !req.query.page){
+        if(req.query.category==='' && req.query.page===''){
             const blogs = await Blog.find(); 
             return res.status(200).json({success:true , data : blogs})
         }

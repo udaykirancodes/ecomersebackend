@@ -32,23 +32,27 @@ function Pagination(model){
                 console.log(req.query.search); 
           }
           if(req.query.category){
-            query = {subCategory :  { "$in" : [req.query.category]} }
+            query = { category :  { "$in" : [req.query.category]} }
           }
          
           pagination.results = await model.find(query).skip(startIndex).limit(limit); 
           
           let length = await model.countDocuments() // length 
-
+          
+          if(req.query.category){
+            length = model.find(query).skip(startIndex).limit(limit).length
+          }
+          
           console.log(endIndex,length)
           pagination.current = page; 
           
+          pagination.pages = length/limit ; // total number of pages 
           if(endIndex < length-1){
               pagination.next = page + 1; 
           }
           if(startIndex > 0){
               pagination.previous = page - 1;   
           }
-          pagination.pages = length/limit ; 
           req.pagination = pagination; 
           next(); 
     } catch (error) {
