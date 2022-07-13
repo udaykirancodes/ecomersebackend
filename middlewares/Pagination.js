@@ -5,7 +5,7 @@ function Pagination(model){
       let startIndex = (page - 1) * limit ; 
       let endIndex = (page ) * limit - 1;
 
-      console.log(startIndex , endIndex); 
+      // console.log(startIndex , endIndex); 
       // find by category 
       let category = req.query.category; 
 
@@ -29,7 +29,7 @@ function Pagination(model){
                         {"category":{$regex:`${search}` , $options:'i'}},
                     ]
                 }
-                console.log(req.query.search); 
+                // console.log(req.query.search); 
           }
           if(req.query.category){
             query = { category :  { "$in" : [req.query.category]} }
@@ -43,7 +43,7 @@ function Pagination(model){
             length = model.find(query).skip(startIndex).limit(limit).length
           }
           
-          console.log(endIndex,length)
+          // console.log(endIndex,length)
           pagination.current = page; 
           
           pagination.pages = length/limit ; // total number of pages 
