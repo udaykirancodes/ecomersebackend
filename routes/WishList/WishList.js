@@ -109,7 +109,7 @@ router.get('/',
                 }
             })
 
-            return res.status(200).json({ success: false, products: list });
+            return res.status(200).json({ success: true , products: list });
 
         } catch (error) {
 

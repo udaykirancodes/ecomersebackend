@@ -185,7 +185,7 @@ async (req, res) => {
         }
         const authToken = jwt.sign(data, JWT_SECRET)
         success = true
-        res.status(200).json({ success, authToken });
+        res.status(200).json({ success, authToken , user : user });
         
     } catch (error) {
         console.log(error.message);

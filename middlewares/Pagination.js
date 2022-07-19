@@ -39,6 +39,7 @@ function Pagination(model){
           
           let length = await model.countDocuments() // length 
           
+          pagination.length = length; // total num of items in the 
           if(req.query.category){
             length = model.find(query).skip(startIndex).limit(limit).length
           }
@@ -46,7 +47,7 @@ function Pagination(model){
           // console.log(endIndex,length)
           pagination.current = page; 
           
-          pagination.pages = length/limit ; // total number of pages 
+          pagination.pages = Math.ceil(length/limit ) ; // total number of pages 
           if(endIndex < length-1){
               pagination.next = page + 1; 
           }
