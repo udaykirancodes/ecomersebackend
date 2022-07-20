@@ -10,8 +10,8 @@ const Emails = require('./Emails/index');
 const WishList = require('./WishList/index');
 const Sell = require('./Sell/index');
 const Orders = require('./Orders/index')
-const Feedback = require('./Feedback/index'); 
-
+const Feedback = require('./Feedback/index');
+const Cart = require('./Cart/index');
 
 //authentication routes 
 router.use('/auth', Auth);
@@ -38,7 +38,10 @@ router.use('/sell', Sell);
 router.use('/orders', Orders);
 
 // feedback route 
-router.use('/feedback',Feedback); 
+router.use('/feedback', Feedback);
+
+// feedback route 
+router.use('/cart', Cart);
 
 // base root 
 router.get('/', (req, res) => {
