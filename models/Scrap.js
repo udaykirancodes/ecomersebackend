@@ -23,6 +23,10 @@ const SellSchema = new mongoose.Schema({
     date:{
         type:Date,
         default:Date.now 
+    },
+    image:{
+        type:String,
+       
     }
 },
 {timestamps:true})
