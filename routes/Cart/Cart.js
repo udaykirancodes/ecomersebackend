@@ -83,7 +83,7 @@ router.delete("/delete", FetchUser, async (req, res) => {
             } else {
                 return res
                     .status(200)
-                    .json({ success: true, data: "Product Not in cart" });
+                    .json({ success: false, data: "Product Not in cart" });
             }
         }
         res.status(200).json({ success: true, data: "Something Went Wrong" });
@@ -113,7 +113,7 @@ router.get("/getall", FetchUser, async (req, res) => {
             }
         })
 
-        return res.status(200).json({ success: false, products: list });
+        return res.status(200).json({ success: true, products: list });
 
     } catch (error) {
 

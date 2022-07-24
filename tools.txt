@@ -1,0 +1,5 @@
+Run Mongodb in MacOS :- 
+/Users/udaykiran/mongodb/bin/mongod --dbpath=/Users/udaykiran/mongodb-data 
+
+Google App Password :  zcwrvqtfpibyfwre
+https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg

@@ -15,8 +15,8 @@ function Pagination(model) {
     let query = {};
 
     try {
-      let maxValue = parseInt(req.query.min);
-      let minValue = parseInt(req.query.max);
+      let maxValue = parseInt(req.query.max);
+      let minValue = parseInt(req.query.min);
 
       let pagination = {
         results: {},
@@ -31,20 +31,33 @@ function Pagination(model) {
             { "category": { $regex: `${search}`, $options: 'i' } },
           ]
         }
-        // console.log(req.query.search); 
       }
+      let length = await model.countDocuments() // length 
+      // search by category for blogs 
       if (req.query.category) {
         query = { category: { "$in": [req.query.category] } }
       }
 
-      pagination.results = await model.find(query).skip(startIndex).limit(limit);
+      // if we have 
 
-      let length = await model.countDocuments() // length 
+      if (req.query.category) {
+        length = model.find(query).countDocuments();
+        // length = model.find(query).skip(startIndex).limit(limit).length
+      }
+
+      // price filters 
+      if (minValue && maxValue) {
+        query = {
+          price: { $gte: minValue, $lte: maxValue },
+        };
+        length = await model.find(query).countDocuments();
+        // length = length.length;
+      }
+      pagination.results = await model.find(query).skip(startIndex).limit(limit);
+      // length = pagination.results.length;
 
       pagination.length = length; // total num of items in the 
-      if (req.query.category) {
-        length = model.find(query).skip(startIndex).limit(limit).length
-      }
+
 
       // console.log(endIndex,length)
       pagination.current = page;

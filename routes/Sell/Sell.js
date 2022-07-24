@@ -86,19 +86,19 @@ router.get("/getsell", Pagination(Sell), FetchAdmin, async (req, res) => {
   }
 });
 
-// get all the scrap products
-router.get("/getscrap", FetchAdmin, Pagination(Scrap), async (req, res) => {
-  try {
-    if (req.pagination) {
-      return res
-        .status(200)
-        .json({ success: true, pagination: req.pagination });
-    }
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).json({ success: false, msg: "Internal Server Error" });
-  }
-});
+// // get all the scrap products
+// router.get("/getscrap", FetchAdmin, Pagination(Scrap), async (req, res) => {
+//   try {
+//     if (req.pagination) {
+//       return res
+//         .status(200)
+//         .json({ success: true, pagination: req.pagination });
+//     }
+//   } catch (error) {
+//     console.log(error.message);
+//     res.status(500).json({ success: false, msg: "Internal Server Error" });
+//   }
+// });
 
 router.post(
   "/scrap",
