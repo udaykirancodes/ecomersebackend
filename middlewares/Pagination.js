@@ -17,6 +17,15 @@ function Pagination(model) {
     try {
       let maxValue = parseInt(req.query.max);
       let minValue = parseInt(req.query.min);
+      if (!minValue || !maxValue) {
+        minValue = 1;
+        maxValue = 100000000000;
+      }
+      if (minValue > maxValue) {
+        let temp = maxValue;
+        maxValue = minValue;
+        minValue = temp;
+      }
 
       let pagination = {
         results: {},
@@ -31,37 +40,53 @@ function Pagination(model) {
             { "category": { $regex: `${search}`, $options: 'i' } },
           ]
         }
+        pagination.results = await model.find(query).skip(startIndex).limit(limit);
       }
       let length = await model.countDocuments() // length 
+
       // search by category for blogs 
       if (req.query.category) {
         query = { category: { "$in": [req.query.category] } }
-      }
+        length = await model.find(query).countDocuments();
+        pagination.results = await model.find(query).skip(startIndex).limit(limit);
 
-      // if we have 
-
-      if (req.query.category) {
-        length = model.find(query).countDocuments();
-        // length = model.find(query).skip(startIndex).limit(limit).length
+        pagination.length = length; // total num of items in the 
+        // console.log(endIndex,length)
+        pagination.current = page;
+        pagination.pages = Math.ceil(length / limit); // total number of pages 
+        if (endIndex < length - 1) {
+          pagination.next = page + 1;
+        }
+        if (startIndex > 0) {
+          pagination.previous = page - 1;
+        }
+        req.pagination = pagination;
+        next();
+        return;
       }
 
       // price filters 
+      // console.log(minValue, maxValue);
       if (minValue && maxValue) {
         query = {
           price: { $gte: minValue, $lte: maxValue },
         };
+        if (req.query.productcategory) {
+          query = {
+            $and: [
+              { price: { $gte: minValue, $lte: maxValue } },
+              { subCategory: { "$in": [req.query.productcategory] } },
+            ]
+          }
+        }
         length = await model.find(query).countDocuments();
-        // length = length.length;
+        pagination.results = await model.find(query).skip(startIndex).limit(limit);
       }
-      pagination.results = await model.find(query).skip(startIndex).limit(limit);
       // length = pagination.results.length;
 
       pagination.length = length; // total num of items in the 
-
-
       // console.log(endIndex,length)
       pagination.current = page;
-
       pagination.pages = Math.ceil(length / limit); // total number of pages 
       if (endIndex < length - 1) {
         pagination.next = page + 1;
