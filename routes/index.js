@@ -12,7 +12,6 @@ const Sell = require('./Sell/index');
 const Orders = require('./Orders/index')
 const Feedback = require('./Feedback/index');
 const Cart = require('./Cart/index');
-const Filter = require('./filter/index')
 
 //authentication routes 
 router.use('/auth', Auth);
@@ -44,8 +43,7 @@ router.use('/feedback', Feedback);
 // feedback route 
 router.use('/cart', Cart);
 
-//filter product by price : route
-router.use('/Filter' , Filter)
+
 // base root 
 router.get('/', (req, res) => {
     res.send('Hello👋')
