@@ -242,6 +242,26 @@ router.put('/edit',
                 let newProduct = await product.save();
                 res.status(200).json({ success: true, product: newProduct });
             }
+            if (req.body.category === "copper") {
+                product.name = req.body.name || product.name
+                product.category = req.body.category || product.category
+                product.description = req.body.description || product.description
+                product.subCategory = req.body.subCategory || product.subCategory
+                product.details = {
+                    brand: req.body.brand ? req.body.brand : product.details.brand,
+                    modelname: req.body.modelname ? req.body.modelname : product.details.modelname,
+                    metalType: req.body.metalType ? req.body.metalType : product.details.metalType,
+                }
+                product.price = req.body.price || product.price
+
+                if (req.files) {
+                    product.img = req.files.map(element => {
+                        return element.path
+                    })
+                }
+                let newProduct = await product.save();
+                res.status(200).json({ success: true, product: newProduct });
+            }
 
         } catch (error) {
             console.log(error);
@@ -249,4 +269,10 @@ router.put('/edit',
         }
     })
 
-module.exports = router; 
+module.exports = router;
+
+
+// steel  
+// aluminium 
+// automobile 
+// old machinary  

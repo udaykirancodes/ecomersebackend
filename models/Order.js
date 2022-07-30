@@ -6,10 +6,18 @@ const BuySchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    products: {
-        type: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
-        required: true
-    },
+    products: [
+        {
+            productid: {
+                type: String,
+            },
+            quantity: {
+                type: Number,
+                default: 1,
+            },
+            _id: false,
+        },
+    ],
     status: {
         type: String,
         default: 'ordered'

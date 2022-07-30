@@ -16,14 +16,15 @@ router.post('/',
     async (req, res) => {
         try {
 
-            let { products, price, location } = req.body;
+            let { products, location, price, phone } = req.body;
+            // here products is array of objects having ObjectID,quantity 
 
             // create a order
             let order = new Order({
                 userid: req.user.id,
                 products: products,
                 status: 'pending',
-                phone: req.body.phone,
+                phone: phone,
                 price: price,
                 location: location
             })

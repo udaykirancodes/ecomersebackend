@@ -12,6 +12,7 @@ const Sell = require('./Sell/index');
 const Orders = require('./Orders/index')
 const Feedback = require('./Feedback/index');
 const Cart = require('./Cart/index');
+const Enquiry = require('./Enquiry/index');
 
 //authentication routes 
 router.use('/auth', Auth);
@@ -40,9 +41,11 @@ router.use('/orders', Orders);
 // feedback route 
 router.use('/feedback', Feedback);
 
-// feedback route 
+// cart route 
 router.use('/cart', Cart);
 
+// enquiry routes
+router.use('/enquiry', Enquiry);
 
 // base root 
 router.get('/', (req, res) => {
