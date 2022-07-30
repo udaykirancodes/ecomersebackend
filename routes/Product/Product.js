@@ -37,8 +37,7 @@ router.get('/categories', async (req, res) => {
 // add product route , AdminAccess 
 router.post('/add',
     [
-        body('name', 'Name Should be atleast 3 characters').isLength({ min: 3 }),
-        body('price', 'Price Should not be empty').isNumeric()
+        body('name', 'Name Should be atleast 3 characters').isLength({ min: 3 })
     ],
     FetchAdmin,
     upload.array('images', 5),
@@ -82,45 +81,46 @@ router.post('/add',
                 await Categories.updateOne({ $addToSet: { products: { $each: newCategories } } });
                 // await Categories.updateOne({$pushAll: {blogs:['google','fb']}},{upsert:true});
             }
-            if (req.body.category === "automobile") {
-                let product = new Product({
-                    name: req.body.name,
-                    category: req.body.category,
-                    description: req.body.description,
-                    subCategory: req.body.subCategory,
-                    details: {
-                        brand: req.body.brand,
-                        modelname: req.body.modelname,
-                        fuelType: req.body.fuelType
-                    },
-                    price: req.body.price,
-                    img: req.files.map(element => {
-                        return element.path
-                    })
-                })
-                let newProduct = await product.save();
-                return res.status(200).json({ success: true, data: newProduct });
-            }
-            if (req.body.category === "metal") {
-                let product = new Product({
-                    name: req.body.name,
-                    category: req.body.category,
-                    description: req.body.description,
-                    subCategory: req.body.subCategory,
-                    details: {
-                        brand: req.body.brand || '',
-                        modelname: req.body.modelname || '',
-                        metalType: req.body.metalType || '',
-                    },
-                    price: req.body.price,
-                    img: req.files.map(element => {
-                        return element.path
-                    })
-                })
 
-                let newProduct = await product.save();
-                return res.status(200).json({ success: true, data: newProduct });
-            }
+            const { name,
+                shortDescription,
+                description,
+                category,
+                subCategory,
+                length,
+                height,
+                width,
+                color,
+                weight,
+                diamerter,
+                price,
+                range
+            } = req.body;
+
+            // save a product 
+            let product = new Product({
+                name: name,
+                shortDescription: shortDescription,
+                description: description,
+                category: category,
+                subCategory: subCategory,
+                price: price ? price : null,
+                range: range,
+                details: {
+                    length: length,
+                    height: height,
+                    width: width,
+                    weight: weight,
+                    diamerter: diamerter,
+                    color: color,
+                },
+                img: req.files.map(element => {
+                    return element.path
+                })
+            })
+            let newProduct = await product.save();
+            return res.status(200).json({ success: true, data: newProduct });
+
 
         } catch (error) {
             console.log(error.message);

@@ -5,6 +5,10 @@ const ProductSchema = new mongoose.Schema({
         required: true,
         min: 5
     },
+    shortDescription: {
+        type: String,
+        required: true
+    },
     description: {
         type: String,
         required: false
@@ -19,25 +23,42 @@ const ProductSchema = new mongoose.Schema({
         default: []
     },
     details: {
-        type: Object,
-        required: true
+        length: {
+            type: String,
+        },
+        height: {
+            type: String,
+        },
+        width: {
+            type: String
+        },
+        weight: {
+            type: String
+        },
+        diameter: {
+            type: String
+        },
+        color: {
+            type: String
+        },
+        _id: false,
     },
     isDeleted: {
         type: Boolean,
-        required: true,
+        required: false,
         default: false
     },
     price: {
         type: Number,
-        required: true
+        required: false
+    },
+    range: {
+        type: String,
+        required: false
     },
     img: {
         type: Array,
         required: true
-    },
-    date: {
-        type: Date,
-        default: Date.now
     }
 },
     { timestamps: true })
